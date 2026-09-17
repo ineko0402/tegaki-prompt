@@ -1,11 +1,19 @@
-const CACHE_NAME = 'tegaki-prompt-v18';
+const CACHE_NAME = 'tegaki-prompt-v19';
 const ROOT_URL = new URL('./', self.location.href);
 const APP_SHELL = [
   './',
   './index.html',
+  './styles.css',
+  './app.js',
+  './components.js',
   './prompt-config.js',
   './manifest.webmanifest',
-  './images/style-samples-v1.webp',
+  './images/styles/colored-pencil.webp',
+  './images/styles/crayon.webp',
+  './images/styles/watercolor.webp',
+  './images/styles/ink-wash.webp',
+  './images/styles/colored-ballpoint.webp',
+  './images/styles/marker.webp',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ].map(path => new URL(path, ROOT_URL).href);
