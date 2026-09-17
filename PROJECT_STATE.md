@@ -4,11 +4,11 @@
 
 ## プロジェクトの状態
 
-- 状態：GitHub Pages公開準備中
+- 状態：GitHub Pagesの初回有効化待ち
 - 現在の公開版：Sites Version 17
 - 公開範囲：非公開
-- 現在の作業段階：GitHub Pages用の自動公開設定とPWA対応を実装済み
-- 次の作業：GitHubリポジトリを作成してpushし、GitHub Pagesでインストール、オフライン動作、更新通知を確認する
+- 現在の作業段階：公開リポジトリへサイト一式を登録済み。GitHub Pagesの初回設定のみ未完了
+- 次の作業：GitHubのSettings > Pagesで公開元をGitHub Actionsに設定し、公開処理を再実行する
 
 ## 正本と同期方針
 
@@ -62,8 +62,10 @@
 
 ### 公開とPWA
 
+- GitHubリポジトリは`https://github.com/ineko0402/tegaki-prompt`とする。
 - GitHub Pagesへの公開は、`.github/workflows/pages.yml`のGitHub Actionsで行う。
 - `main`ブランチの更新時に、`dist`フォルダだけをGitHub Pagesへ公開する。
+- 自動公開は`dist`または公開ワークフローを変更したときだけ実行し、`PROJECT_STATE.md`だけの更新では実行しない。
 - Manifest、Service Worker、アイコンを`dist`内で管理する。
 - GitHub PagesのプロジェクトURLでも動作するよう、PWA関連のパスは相対指定にする。
 - `index.html`、`prompt-config.js`、Manifestはネットワーク優先で取得し、オフライン時のみキャッシュを使う。
@@ -320,6 +322,7 @@
 - 構図・背景の3種類で、目的に合った指示が生成されるか確認する必要がある。
 - 「背景を指定」の入力表示、未入力時の白背景、リセット動作を確認する必要がある。
 - 項目追加後も横画面とスマホで操作しやすいか確認する必要がある。
+- GitHub Pagesの初回有効化は、GitHubのSettings > Pagesで公開元をGitHub Actionsに設定する必要がある。
 
 ## 解決済みの問題
 
@@ -337,8 +340,8 @@
 
 GitHub Pagesへ公開し、PWAと現在のプロンプトを確認する。
 
-1. GitHubリポジトリを作成して`main`ブランチへpushする。
-2. GitHub Pagesの公開元をGitHub Actionsに設定し、公開成功を確認する。
+1. GitHub Pagesの公開元をGitHub Actionsに設定する。
+2. 失敗した公開処理を再実行し、公開成功を確認する。
 3. PCまたはスマートフォンへインストールできることを確認する。
 4. 一度開いた後、オフラインでもプロンプトを作成・コピーできることを確認する。
 5. 更新後に再読み込み案内が表示され、最新版へ切り替わることを確認する。
