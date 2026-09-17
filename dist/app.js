@@ -35,13 +35,25 @@ function updateSummary() {
   };
   const count = ['keep', 'remove', 'change'].filter(id => value(id)).length;
   byId('settings-summary').textContent = `${labels[checked('composition')]}・${count ? `追加指定 ${count}件` : '追加指定なし'}`;
+  byId('series-composition-summary').textContent = labels[checked('composition')];
+  byId('series-instruction-summary').textContent = count ? `${count}件` : 'なし';
+  ['keep', 'remove', 'change'].forEach(id => {
+    const summary = byId(`${id}-summary`);
+    summary.textContent = value(id) || '未入力';
+    summary.classList.toggle('has-value', Boolean(value(id)));
+  });
 }
 
-function updateMode() {
+function updateMode(openSettingsForContinue = false) {
   const continuing = checked('mode') === 'continue';
-  byId('series-message').hidden = !continuing;
   document.querySelector('.style-picker').classList.toggle('is-continuing', continuing);
+  document.querySelector('.style-grid').hidden = continuing;
+  byId('series-workspace').hidden = !continuing;
+  byId('style-title').textContent = continuing ? '今回の写真を調整' : '画風を選ぶ';
+  byId('style-description').textContent = continuing ? 'シリーズ基準画像の画風を引き継ぎます' : '同じ静物で、画材による違いを比べます';
+  byId('style-badge').textContent = continuing ? '継続' : '静物';
   document.querySelectorAll('input[name="style"]').forEach(input => { input.disabled = continuing; });
+  if (continuing && openSettingsForContinue && mobileQuery.matches && !settingsPanel.open) settingsPanel.showModal();
 }
 
 function updateConditionalFields() {
@@ -117,6 +129,16 @@ function closePrompt() {
   byId('show-prompt').focus();
 }
 
+function toggleAccordion(id) {
+  document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+    const isTarget = trigger.dataset.accordion === id;
+    const willOpen = isTarget && trigger.getAttribute('aria-expanded') !== 'true';
+    trigger.setAttribute('aria-expanded', String(willOpen));
+    byId(`${trigger.dataset.accordion}-panel`).hidden = !willOpen;
+    if (willOpen) byId(trigger.dataset.accordion).focus();
+  });
+}
+
 let copyTimer;
 async function copyPrompt() {
   const output = byId('output');
@@ -138,14 +160,20 @@ async function copyPrompt() {
 }
 
 document.querySelectorAll('input[name="style"]').forEach(input => input.addEventListener('change', renderPrompt));
-document.querySelectorAll('input[name="mode"]').forEach(input => input.addEventListener('change', render));
+document.querySelectorAll('input[name="mode"]').forEach(input => input.addEventListener('change', () => {
+  updateMode(true);
+  updateConditionalFields();
+  renderPrompt();
+}));
 document.querySelectorAll('input[name="composition"]').forEach(input => input.addEventListener('change', () => {
   updateConditionalFields();
   renderPrompt();
 }));
 fields.forEach(id => byId(id).addEventListener('input', renderPrompt));
+document.querySelectorAll('.accordion-trigger').forEach(trigger => trigger.addEventListener('click', () => toggleAccordion(trigger.dataset.accordion)));
 
 byId('open-settings').addEventListener('click', openSettings);
+byId('open-series-settings').addEventListener('click', openSettings);
 byId('close-settings').addEventListener('click', closeSettings);
 byId('close-settings-done').addEventListener('click', closeSettings);
 settingsPanel.addEventListener('click', event => { if (mobileQuery.matches && event.target === settingsPanel) closeSettings(); });
@@ -158,14 +186,6 @@ byId('close-prompt').addEventListener('click', closePrompt);
 promptDialog.addEventListener('click', event => { if (event.target === promptDialog) closePrompt(); });
 byId('copy').addEventListener('click', copyPrompt);
 byId('copy-dialog').addEventListener('click', copyPrompt);
-
-byId('reset').addEventListener('click', () => {
-  document.querySelector('input[name="mode"][value="new"]').checked = true;
-  document.querySelector('input[name="style"][value="colored-pencil"]').checked = true;
-  document.querySelector('input[name="composition"][value="whole"]').checked = true;
-  fields.forEach(id => { byId(id).value = ''; });
-  render();
-});
 
 mobileQuery.addEventListener('change', configureSettingsPanel);
 configureSettingsPanel();

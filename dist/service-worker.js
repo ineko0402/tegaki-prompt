@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tegaki-prompt-v19';
+const CACHE_NAME = 'tegaki-prompt-v20';
 const ROOT_URL = new URL('./', self.location.href);
 const APP_SHELL = [
   './',
