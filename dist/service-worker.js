@@ -70,6 +70,9 @@ self.addEventListener('fetch', event => {
 
   const isCurrentContent = request.mode === 'navigate'
     || url.pathname.endsWith('/index.html')
+    || url.pathname.endsWith('/styles.css')
+    || url.pathname.endsWith('/app.js')
+    || url.pathname.endsWith('/components.js')
     || url.pathname.endsWith('/prompt-config.js')
     || url.pathname.endsWith('/manifest.webmanifest');
 
